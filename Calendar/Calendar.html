@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calendar</title>
+<style>
+body {
+    font-family: 'Brush Script MT', cursive, rgb(163, 88, 14);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url(calback.png.jpg);
+    background-size: cover;
+
+
+}
+
+.calendar {
+    height: 35%;
+    width: 65%;
+    border: 3px solid #eca5a5;
+    border-radius: 80px;
+    padding: 80px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: xx-large;
+    accent-color: rgb(35, 167, 167);
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    
+
+}
+
+.calendar-day {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #eee;
+    cursor: pointer;
+}
+
+.calendar-day.weekend {
+    background-color: #ffa4a4;
+}
+
+.calendar-day.today {
+    background-color: #824a8a;
+    font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+<div class="calendar">
+    <div class="calendar-header">
+        <button id="prevMonth">&lt;</button>
+        <span id="monthYear"></span>
+        <button id="nextMonth">&gt;</button>
+    </div>
+    <div class="calendar-days" id="calendarDays"></div>
+</div>
+
+<script>
+const monthYear = document.getElementById('monthYear');
+const calendarDays = document.getElementById('calendarDays');
+const prevMonthButton = document.getElementById('prevMonth');
+const nextMonthButton = document.getElementById('nextMonth');
+
+let currentDate = new Date();
+let currentMonth = currentDate.getMonth();
+let currentYear = currentDate.getFullYear();
+
+
+function generateCalendar(month, year) {
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+
+    monthYear.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
+    calendarDays.innerHTML = '';
+
+    for (let i = 0; i < firstDay; i++) {
+        calendarDays.innerHTML += '<div class="calendar-day"></div>';
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const day = new Date(year, month, i);
+        const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+        const isToday = day.getDate() === today.getDate() && day.getMonth() === today.getMonth() && day.getFullYear() === today.getFullYear();
+
+
+        let dayClass = 'calendar-day';
+        if (isWeekend) dayClass += ' weekend';
+        if (isToday) dayClass += ' today';
+
+        calendarDays.innerHTML += `<div class="${dayClass}">${i}</div>`;
+    }
+    
+}
+
+function updateCalendar() {
+    generateCalendar(currentMonth, currentYear);
+}
+
+prevMonthButton.addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
+    updateCalendar();
+});
+
+nextMonthButton.addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    updateCalendar();
+});
+
+updateCalendar();
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative List Calendar</title>
+    <style>
+    body {
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url(calback.png.jpg);
+    background-size: cover;
+    }
+    
+
+        .calendar {
+            width: 300px;
+            font-family: 'Arial', sans-serif;
+            border: 2px solid #d57ee09c;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(95, 101, 179, 0.808);
+            width: 70%;
+            height: 45%;
+        }
+
+        .calendar-header {
+
+            background-color: #996fbbb6;
+            font-family: 'Brush Script MT', cursive, rgb(163, 88, 14);
+            color: rgb(146, 225, 245);
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .calendar-days {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-days li {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .calendar-days li:hover {
+            background-color: #fdff9abd;
+        }
+
+        .calendar-days li.weekend {
+            background-color: #f9f9f9;
+            color: #777;
+        }
+
+        .calendar-days li.today {
+            background-color: #e0f7fa;
+            font-weight: bold;
+        }
+        .calendar-days li.other-month {
+          color: #ccc;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="calendar">
+        <div class="calendar-header" id="monthYear"></div>
+        <ul class="calendar-days" id="calendarDays"></ul>
+    </div>
+
+    <script>
+        const monthYear = document.getElementById('monthYear');
+        const calendarDays = document.getElementById('calendarDays');
+        const prevMonthButton = document.getElementById('prevMonth');
+        const nextMonthButton = document.getElementById('nextMonth');
+
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        function generateCalendar(month, year) {
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const prevMonthDays = new Date(year, month, 0).getDate();
+            const today = new Date();
+
+            monthYear.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
+            calendarDays.innerHTML = '';
+
+            // Previous month days
+            for (let i = firstDay; i > 0; i--) {
+                calendarDays.innerHTML += `<li class="other-month">${prevMonthDays - i + 1}</li>`;
+            }
+
+            // Current month days
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = new Date(year, month, i);
+                const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+                const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+
+                let dayClass = isWeekend ? 'weekend' : '';
+                if (isToday) dayClass += ' today';
+
+                calendarDays.innerHTML += `<li class="${dayClass}">${i}</li>`;
+            }
+
+            // Next month days
+            let nextMonthDays = 1;
+            while (calendarDays.children.length < 42) {
+                calendarDays.innerHTML += `<li class="other-month">${nextMonthDays}</li>`;
+                nextMonthDays++;
+            }
+
+        }
+
+        generateCalendar(currentMonth, currentYear);
+
+        // Add previous and next month buttons (optional)
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'ArrowLeft') {
+            currentMonth--;
+            if (currentMonth < 0) {
+              currentMonth = 11;
+              currentYear--;
+            }
+            generateCalendar(currentMonth, currentYear);
+          } else if (event.key === 'ArrowRight') {
+            currentMonth++;
+            if (currentMonth > 11) {
+              currentMonth = 0;
+              currentYear++;
+            }
+            generateCalendar(currentMonth, currentYear);
+          }
+        });
+
+    </script>
+</body>
+</html>
